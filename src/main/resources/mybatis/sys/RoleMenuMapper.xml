@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xt.business.sys.mapper.RoleMenuMapper">
+    <!-- 开启二级缓存 -->
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xt.business.sys.domain.entity.RoleMenu">
+                <id column="id" property="id" javaType="Long"/>
+                <result column="role_id" property="roleId" javaType="Long"/>
+                <result column="menu_id" property="menuId" javaType="Long"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, role_id, menu_id
+    </sql>
+
+    <sql id="list_where">
+        <where>
+                    <if test="ids != null and ids.size() > 0">
+                        and id in
+                        <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                            #{item.id}
+                        </foreach>
+                    </if>
+                    <if test="roleId != null">
+                        and role_id = #{roleId}
+                    </if>
+                    <if test="menuId != null">
+                        and menu_id = #{menuId}
+                    </if>
+        </where>
+    </sql>
+    <sql id="update_where">
+        <where>
+                    <if test="id != null">
+                        and id = #{id}
+                    </if>
+        </where>
+    </sql>
+    <select id="getRoleMenuList" parameterType="com.xt.business.sys.domain.entity.RoleMenu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role_menu
+        <include refid="list_where"/>
+    </select>
+
+    <select id="getRoleMenuOne" parameterType="com.xt.business.sys.domain.entity.RoleMenu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role_menu
+        <include refid="list_where"/>
+        limit 1
+    </select>
+
+    <insert id="insertRoleMenu" parameterType="com.xt.business.sys.domain.entity.RoleMenu">
+        insert into sys_role_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    role_id,
+                    menu_id,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    #{roleId},
+                    #{menuId},
+        </trim>
+    </insert>
+
+    <insert id="insertBatchRoleMenu">
+        insert into sys_role_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    role_id,
+                    menu_id,
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                        #{item.roleId},
+                        #{item.menuId},
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateRoleMenu" parameterType="com.xt.business.sys.domain.entity.RoleMenu">
+        update sys_role_menu
+        <set>
+                    <if test="roleId != null">
+                        role_id = #{roleId},
+                    </if>
+                    <if test="menuId != null">
+                        menu_id = #{menuId},
+                    </if>
+        </set>
+        <include refid="update_where"/>
+    </update>
+
+    <update id="updateBatchRoleMenuIds" parameterType="com.xt.business.sys.domain.entity.RoleMenu">
+        update sys_role_menu
+        <set>
+                    role_id = #{roleId},
+                    menu_id = #{menuId},
+        </set>
+        <where>
+                    id in
+                    <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                        #{item.id}
+                    </foreach>
+        </where>
+    </update>
+
+    <update id="updateBatchRoleMenu">
+        update sys_role_menu
+        <trim prefix="set" suffixOverrides=",">
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=";">
+                    <trim prefix="id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.id} !=null">
+                                    when id= #{item.id} then #{item.id}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="role_id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.roleId} !=null">
+                                    when id= #{item.id} then #{item.roleId}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="menu_id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.menuId} !=null">
+                                    when id= #{item.id} then #{item.menuId}
+                                </if>
+                        </foreach>
+                    </trim>
+            </foreach>
+        </trim>
+        <where>
+            id in
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+                #{item.id}
+            </foreach>
+        </where>
+    </update>
+
+    <update id="deleteRoleMenu" parameterType="com.xt.business.sys.domain.entity.RoleMenu">
+        <!-- 逻辑删除 -->
+        update sys_role_menu
+        <set>
+        </set>
+        <include refid="update_where"/>
+    </update>
+
+    <update id="deleteBatchRoleMenu" parameterType="com.xt.business.sys.domain.entity.RoleMenu">
+        update sys_role_menu
+        <set>
+        </set>
+        <where>
+                    id in
+                    <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                        #{item.id}
+                    </foreach>
+        </where>
+    </update>
+</mapper>

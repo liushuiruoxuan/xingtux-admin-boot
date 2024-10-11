@@ -1,0 +1,400 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xt.business.sys.mapper.MenuMapper">
+    <!-- 开启二级缓存 -->
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xt.business.sys.domain.entity.Menu">
+                <id column="id" property="id" javaType="Long"/>
+                <result column="parent_id" property="parentId" javaType="Long"/>
+                <result column="menu_name" property="menuName" javaType="String"/>
+                <result column="sort" property="sort" javaType="Integer"/>
+                <result column="menu_type" property="menuType" javaType="Integer"/>
+                <result column="path" property="path" javaType="String"/>
+                <result column="component_path" property="componentPath" javaType="String"/>
+                <result column="perms" property="perms" javaType="String"/>
+                <result column="icon" property="icon" javaType="String"/>
+                <result column="status" property="status" javaType="Integer"/>
+                <result column="deleted" property="deleted" javaType="Integer"/>
+                <result column="creator" property="creator" javaType="String"/>
+                <result column="updater" property="updater" javaType="String"/>
+                <result column="create_time" property="createTime" javaType="Date"/>
+                <result column="update_time" property="updateTime" javaType="Date"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, parent_id, menu_name, sort, menu_type, path, component_path, perms, icon, status, deleted, creator, updater, create_time, update_time
+    </sql>
+
+    <sql id="list_where">
+        <where>
+                    <if test="ids != null and ids.size() > 0">
+                        and id in
+                        <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                            #{item.id}
+                        </foreach>
+                    </if>
+                    <if test="parentId != null">
+                        and parent_id = #{parentId}
+                    </if>
+                    <if test="menuName != null and menuName !=''">
+                        and menu_name = #{menuName}
+                    </if>
+                    <if test="sort != null">
+                        and sort = #{sort}
+                    </if>
+                    <if test="menuType != null">
+                        and menu_type = #{menuType}
+                    </if>
+                    <if test="path != null and path !=''">
+                        and path = #{path}
+                    </if>
+                    <if test="componentPath != null and componentPath !=''">
+                        and component_path = #{componentPath}
+                    </if>
+                    <if test="perms != null and perms !=''">
+                        and perms = #{perms}
+                    </if>
+                    <if test="icon != null and icon !=''">
+                        and icon = #{icon}
+                    </if>
+                    <if test="status != null">
+                        and status = #{status}
+                    </if>
+                    and deleted = 0
+                    <if test="creator != null and creator !=''">
+                        and creator = #{creator}
+                    </if>
+                    <if test="updater != null and updater !=''">
+                        and updater = #{updater}
+                    </if>
+                    <if test="createTime != null">
+                        and create_time = #{createTime}
+                    </if>
+                    <if test="updateTime != null">
+                        and update_time = #{updateTime}
+                    </if>
+        </where>
+    </sql>
+    <sql id="update_where">
+        <where>
+                    <if test="id != null">
+                        and id = #{id}
+                    </if>
+        </where>
+    </sql>
+    <select id="getMenuList" parameterType="com.xt.business.sys.domain.entity.Menu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_menu
+        <include refid="list_where"/>
+    </select>
+
+    <select id="getMenuOne" parameterType="com.xt.business.sys.domain.entity.Menu" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_menu
+        <include refid="list_where"/>
+        limit 1
+    </select>
+    <select id="getMenuByRoleIds" resultType="com.xt.business.sys.controller.response.MenuResponse">
+        select um.id,um.parent_id,um.menu_name,um.sort,um.menu_type,um.path,um.component_path,um.perms,um.icon
+        from sys_menu um left join sys_role_menu urm on um.id = urm.menu_id
+        where urm.role_id in
+        <foreach collection="roleIds" open="(" close=")" separator="," item="roleId">
+            #{roleId}
+        </foreach>
+        and um.deleted = 0 and um.status = 0
+    </select>
+
+    <insert id="insertMenu" parameterType="com.xt.business.sys.domain.entity.Menu">
+        insert into sys_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    parent_id,
+                    menu_name,
+                    sort,
+                    menu_type,
+                    path,
+                    component_path,
+                    perms,
+                    icon,
+                    status,
+                    deleted,
+                    creator,
+                    updater,
+                    create_time,
+                    update_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    #{parentId},
+                    #{menuName},
+                    #{sort},
+                    #{menuType},
+                    #{path},
+                    #{componentPath},
+                    #{perms},
+                    #{icon},
+                    #{status},
+                    #{deleted},
+                    #{creator},
+                    #{updater},
+                    #{createTime},
+                    #{updateTime},
+        </trim>
+    </insert>
+
+    <insert id="insertBatchMenu">
+        insert into sys_menu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    parent_id,
+                    menu_name,
+                    sort,
+                    menu_type,
+                    path,
+                    component_path,
+                    perms,
+                    icon,
+                    status,
+                    deleted,
+                    creator,
+                    updater,
+                    create_time,
+                    update_time,
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                        #{item.parentId},
+                        #{item.menuName},
+                        #{item.sort},
+                        #{item.menuType},
+                        #{item.path},
+                        #{item.componentPath},
+                        #{item.perms},
+                        #{item.icon},
+                        #{item.status},
+                        #{item.deleted},
+                        #{item.creator},
+                        #{item.updater},
+                        #{item.createTime},
+                        #{item.updateTime},
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateMenu" parameterType="com.xt.business.sys.domain.entity.Menu">
+        update sys_menu
+        <set>
+                    <if test="parentId != null">
+                        parent_id = #{parentId},
+                    </if>
+                    <if test="menuName != null">
+                        menu_name = #{menuName},
+                    </if>
+                    <if test="sort != null">
+                        sort = #{sort},
+                    </if>
+                    <if test="menuType != null">
+                        menu_type = #{menuType},
+                    </if>
+                    <if test="path != null">
+                        path = #{path},
+                    </if>
+                    <if test="componentPath != null">
+                        component_path = #{componentPath},
+                    </if>
+                    <if test="perms != null">
+                        perms = #{perms},
+                    </if>
+                    <if test="icon != null">
+                        icon = #{icon},
+                    </if>
+                    <if test="status != null">
+                        status = #{status},
+                    </if>
+                    <if test="deleted != null">
+                        deleted = #{deleted},
+                    </if>
+                    <if test="creator != null">
+                        creator = #{creator},
+                    </if>
+                    <if test="updater != null">
+                        updater = #{updater},
+                    </if>
+                    <if test="createTime != null">
+                        create_time = #{createTime},
+                    </if>
+                    <if test="updateTime != null">
+                        update_time = #{updateTime},
+                    </if>
+        </set>
+        <include refid="update_where"/>
+    </update>
+
+    <update id="updateBatchMenuIds" parameterType="com.xt.business.sys.domain.entity.Menu">
+        update sys_menu
+        <set>
+                    parent_id = #{parentId},
+                    menu_name = #{menuName},
+                    sort = #{sort},
+                    menu_type = #{menuType},
+                    path = #{path},
+                    component_path = #{componentPath},
+                    perms = #{perms},
+                    icon = #{icon},
+                    status = #{status},
+                    deleted = #{deleted},
+                    creator = #{creator},
+                    updater = #{updater},
+                    create_time = #{createTime},
+                    update_time = #{updateTime},
+        </set>
+        <where>
+                    id in
+                    <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                        #{item.id}
+                    </foreach>
+        </where>
+    </update>
+
+    <update id="updateBatchMenu">
+        update sys_menu
+        <trim prefix="set" suffixOverrides=",">
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=";">
+                    <trim prefix="id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.id} !=null">
+                                    when id= #{item.id} then #{item.id}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="parent_id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.parentId} !=null">
+                                    when id= #{item.id} then #{item.parentId}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="menu_name=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.menuName} !=null and #{item.menuName} != ''">
+                                    when id= #{item.id} then #{item.menuName}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="sort=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.sort} !=null">
+                                    when id= #{item.id} then #{item.sort}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="menu_type=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.menuType} !=null">
+                                    when id= #{item.id} then #{item.menuType}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="path=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.path} !=null and #{item.path} != ''">
+                                    when id= #{item.id} then #{item.path}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="component_path=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.componentPath} !=null and #{item.componentPath} != ''">
+                                    when id= #{item.id} then #{item.componentPath}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="perms=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.perms} !=null and #{item.perms} != ''">
+                                    when id= #{item.id} then #{item.perms}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="icon=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.icon} !=null and #{item.icon} != ''">
+                                    when id= #{item.id} then #{item.icon}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="status=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.status} !=null">
+                                    when id= #{item.id} then #{item.status}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="deleted=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.deleted} !=null">
+                                    when id= #{item.id} then #{item.deleted}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="creator=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.creator} !=null and #{item.creator} != ''">
+                                    when id= #{item.id} then #{item.creator}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="updater=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.updater} !=null and #{item.updater} != ''">
+                                    when id= #{item.id} then #{item.updater}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="create_time=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.createTime} !=null">
+                                    when id= #{item.id} then #{item.createTime}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="update_time=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.updateTime} !=null">
+                                    when id= #{item.id} then #{item.updateTime}
+                                </if>
+                        </foreach>
+                    </trim>
+            </foreach>
+        </trim>
+        <where>
+            id in
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+                #{item.id}
+            </foreach>
+        </where>
+    </update>
+
+    <update id="deleteMenu" parameterType="com.xt.business.sys.domain.entity.Menu">
+        <!-- 逻辑删除 -->
+        update sys_menu
+        <set>
+                        deleted = 1
+        </set>
+        <include refid="update_where"/>
+    </update>
+
+    <update id="deleteBatchMenu" parameterType="com.xt.business.sys.domain.entity.Menu">
+        update sys_menu
+        <set>
+                        deleted = 1
+        </set>
+        <where>
+                    id in
+                    <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                        #{item.id}
+                    </foreach>
+        </where>
+    </update>
+</mapper>

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xt.business.sys.mapper.UserRoleMapper">
+    <!-- 开启二级缓存 -->
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.xt.business.sys.domain.entity.UserRole">
+                <id column="id" property="id" javaType="Long"/>
+                <result column="user_id" property="userId" javaType="Long"/>
+                <result column="role_id" property="roleId" javaType="Long"/>
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, role_id
+    </sql>
+
+    <sql id="list_where">
+        <where>
+                    <if test="ids != null and ids.size() > 0">
+                        and id in
+                        <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                            #{item.id}
+                        </foreach>
+                    </if>
+                    <if test="userId != null">
+                        and user_id = #{userId}
+                    </if>
+                    <if test="roleId != null">
+                        and role_id = #{roleId}
+                    </if>
+        </where>
+    </sql>
+    <sql id="update_where">
+        <where>
+                    <if test="id != null">
+                        and id = #{id}
+                    </if>
+        </where>
+    </sql>
+    <select id="getUserRoleList" parameterType="com.xt.business.sys.domain.entity.UserRole" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user_role
+        <include refid="list_where"/>
+    </select>
+
+    <select id="getUserRoleOne" parameterType="com.xt.business.sys.domain.entity.UserRole" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_user_role
+        <include refid="list_where"/>
+        limit 1
+    </select>
+
+    <insert id="insertUserRole" parameterType="com.xt.business.sys.domain.entity.UserRole">
+        insert into sys_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    user_id,
+                    role_id,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                    #{userId},
+                    #{roleId},
+        </trim>
+    </insert>
+
+    <insert id="insertBatchUserRole">
+        insert into sys_user_role
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                    user_id,
+                    role_id,
+        </trim>
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                        #{item.userId},
+                        #{item.roleId},
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="updateUserRole" parameterType="com.xt.business.sys.domain.entity.UserRole">
+        update sys_user_role
+        <set>
+                    <if test="userId != null">
+                        user_id = #{userId},
+                    </if>
+                    <if test="roleId != null">
+                        role_id = #{roleId},
+                    </if>
+        </set>
+        <include refid="update_where"/>
+    </update>
+
+    <update id="updateBatchUserRoleIds" parameterType="com.xt.business.sys.domain.entity.UserRole">
+        update sys_user_role
+        <set>
+                    user_id = #{userId},
+                    role_id = #{roleId},
+        </set>
+        <where>
+                    id in
+                    <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                        #{item.id}
+                    </foreach>
+        </where>
+    </update>
+
+    <update id="updateBatchUserRole">
+        update sys_user_role
+        <trim prefix="set" suffixOverrides=",">
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=";">
+                    <trim prefix="id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.id} !=null">
+                                    when id= #{item.id} then #{item.id}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="user_id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.userId} !=null">
+                                    when id= #{item.id} then #{item.userId}
+                                </if>
+                        </foreach>
+                    </trim>
+                    <trim prefix="role_id=case" suffix="end,">
+                        <foreach collection="list" item="item" index="index">
+                                <if test="#{item.roleId} !=null">
+                                    when id= #{item.id} then #{item.roleId}
+                                </if>
+                        </foreach>
+                    </trim>
+            </foreach>
+        </trim>
+        <where>
+            id in
+            <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+                #{item.id}
+            </foreach>
+        </where>
+    </update>
+
+    <update id="deleteUserRole" parameterType="com.xt.business.sys.domain.entity.UserRole">
+        <!-- 逻辑删除 -->
+        update sys_user_role
+        <set>
+        </set>
+        <include refid="update_where"/>
+    </update>
+
+    <update id="deleteBatchUserRole" parameterType="com.xt.business.sys.domain.entity.UserRole">
+        update sys_user_role
+        <set>
+        </set>
+        <where>
+                    id in
+                    <foreach collection="ids" item="item" index="index" open="(" close=")" separator=",">
+                        #{item.id}
+                    </foreach>
+        </where>
+    </update>
+</mapper>
