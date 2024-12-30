@@ -6,15 +6,11 @@ import ${package.Service}.${table.serviceName};
 import ${commonPackagePath}.common.PageRequest;
 import ${commonPackagePath}.common.ResponseResult;
 import ${commonPackagePath}.common.PageResponse;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
 
 /**
 * ${table.comment} 控制层
@@ -63,12 +59,6 @@ public class ${table.controllerName} {
     @PutMapping("/update${entity}")
     public ResponseResult<Integer> update${entity}(@RequestBody ${entity}Request request) {
         return ResponseResult.success(${entity?uncap_first}Service.update${entity}(request));
-    }
-
-    @ApiOperation(value = "通过Ids批量修改")
-    @PutMapping("/updateBatch${entity}Ids")
-    public ResponseResult<Integer> updateBatch${entity}Ids(@RequestBody ${entity}Request request) {
-        return ResponseResult.success(${entity?uncap_first}Service.updateBatch${entity}Ids(request));
     }
 
     @ApiOperation(value = "批量修改")

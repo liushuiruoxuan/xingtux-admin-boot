@@ -48,12 +48,6 @@ public interface ${table.mapperName}  {
      */
     int update${entity}(${entity} request);
     /**
-     * 通过Ids批量修改
-     * @param request
-     * @return
-     */
-    int updateBatch${entity}Ids(${entity} request);
-    /**
      * 批量修改
      * @param request
      * @return

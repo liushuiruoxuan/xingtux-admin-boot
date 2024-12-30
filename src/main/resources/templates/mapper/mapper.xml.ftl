@@ -41,7 +41,7 @@
                     <if test="${field.propertyName}s != null and ${field.propertyName}s.size() > 0">
                         and ${field.name} in
                         <foreach collection="${field.propertyName}s" item="item" index="index" open="(" close=")" separator=",">
-                            ${r"#{"}item.${field.propertyName}${r"}"}
+                            ${r"#{"}item${r"}"}
                         </foreach>
                     </if>
                     <if test="${field.propertyName} != null">
@@ -71,6 +71,7 @@
         <include refid="Base_Column_List"/>
         from ${table.name}
         <include refid="list_where"/>
+        order by create_time desc
     </select>
 
     <select id="get${entity}One" parameterType="${package.Entity}.${entity}" resultMap="BaseResultMap">
@@ -81,19 +82,23 @@
         limit 1
     </select>
 
-    <insert id="insert${entity}" parameterType="${package.Entity}.${entity}">
+    <insert id="insert${entity}" parameterType="${package.Entity}.${entity}" useGeneratedKeys="true" keyColumn="id" keyProperty="id" >
         insert into ${table.name}
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <#list table.fields as field>
                 <#if !field.keyFlag>
-                    ${field.name},
+                    <if test="${field.propertyName} != null">
+                        ${field.name},
+                    </if>
                 </#if>
             </#list>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <#list table.fields as field>
                 <#if !field.keyFlag>
-                    ${r"#{"}${field.propertyName}${r"}"},
+                    <if test="${field.propertyName} != null">
+                        ${r"#{"}${field.propertyName}${r"}"},
+                    </if>
                 </#if>
             </#list>
         </trim>
@@ -104,7 +109,9 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <#list table.fields as field>
                 <#if !field.keyFlag>
-                    ${field.name},
+                    <if test="${field.propertyName} != null">
+                        ${field.name},
+                    </if>
                 </#if>
             </#list>
         </trim>
@@ -113,14 +120,16 @@
             <trim prefix="(" suffix=")" suffixOverrides=",">
                 <#list table.fields as field>
                     <#if !field.keyFlag>
-                        ${r"#{"}item.${field.propertyName}${r"}"},
+                        <if test="${field.propertyName} != null">
+                            ${r"#{"}item.${field.propertyName}${r"}"},
+                        </if>
                     </#if>
                 </#list>
             </trim>
         </foreach>
     </insert>
 
-    <update id="update${entity}" parameterType="${package.Entity}.${entity}">
+    <update id="update${entity}" parameterType="${package.Entity}.${entity}" useGeneratedKeys="true" keyColumn="id" keyProperty="id" >
         update ${table.name}
         <set>
             <#list table.fields as field>
@@ -134,54 +143,25 @@
         <include refid="update_where"/>
     </update>
 
-    <update id="updateBatch${entity}Ids" parameterType="${package.Entity}.${entity}">
-        update ${table.name}
-        <set>
-            <#list table.fields as field>
-                <#if !field.keyFlag>
-                    ${field.name} = ${r"#{"}${field.propertyName}${r"}"},
-                </#if>
-            </#list>
-        </set>
-        <where>
-            <#list table.fields as field>
-                <#if field.keyFlag>
-                    ${field.name} in
-                    <foreach collection="${field.name}s" item="item" index="index" open="(" close=")" separator=",">
-                        ${r"#{"}item.${field.propertyName}${r"}"}
-                    </foreach>
-                </#if>
-            </#list>
-        </where>
-    </update>
 
     <update id="updateBatch${entity}">
-        update ${table.name}
-        <trim prefix="set" suffixOverrides=",">
-            <foreach collection="list" item="item" index="index" open="(" close=")" separator=";">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update ${table.name}
+            <set>
                 <#list table.fields as field>
-                    <trim prefix="${field.name}=case" suffix="end,">
-                        <foreach collection="list" item="item" index="index">
-                            <#if  field.propertyType == "String">
-                                <if test="${r"#{"}item.${field.propertyName}${r"}"} !=null and ${r"#{"}item.${field.propertyName}${r"}"} != ''">
-                                    when id= ${r"#{"}item.id${r"}"} then ${r"#{"}item.${field.propertyName}${r"}"}
-                                </if>
-                            <#else>
-                                <if test="${r"#{"}item.${field.propertyName}${r"}"} !=null">
-                                    when id= ${r"#{"}item.id${r"}"} then ${r"#{"}item.${field.propertyName}${r"}"}
-                                </if>
-                            </#if>
-                        </foreach>
-                    </trim>
+                    <#if !field.keyFlag>
+                        ${field.name} = ${r"#{"}item.${field.propertyName}${r"}"},
+                    </#if>
                 </#list>
-            </foreach>
-        </trim>
-        <where>
-            id in
-            <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
-                ${r"#{"}item.id${r"}"}
-            </foreach>
-        </where>
+            </set>
+            <where>
+                <#list table.fields as field>
+                    <#if field.keyFlag>
+                        ${field.name} = ${r"#{"}item.${field.propertyName}${r"}"}
+                    </#if>
+                </#list>
+            </where>
+        </foreach>
     </update>
 
     <update id="delete${entity}" parameterType="${package.Entity}.${entity}">
@@ -190,8 +170,8 @@
         <set>
             <#list table.fields as field>
                 <#if !field.keyFlag>
-                    <#if field.propertyName =="deleted">
-                        deleted = 1
+                    <#if field.propertyName =="del_flag">
+                        del_flag = 1
                     </#if>
                 </#if>
             </#list>
@@ -204,8 +184,8 @@
         <set>
             <#list table.fields as field>
                 <#if !field.keyFlag>
-                    <#if field.propertyName =="deleted">
-                        deleted = 1
+                    <#if field.propertyName =="del_flag">
+                        del_flag = 1
                     </#if>
                 </#if>
             </#list>

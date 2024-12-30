@@ -11,7 +11,7 @@ public class PageResponse<T extends Serializable> implements Serializable {
     /**
      * 当前页
      */
-    private long pageNo;
+    private long pageNum;
 
     /**
      * 每页条数
@@ -38,7 +38,7 @@ public class PageResponse<T extends Serializable> implements Serializable {
     }
 
     public PageResponse(PageInfo<T> pageInfo) {
-        this.pageNo = pageInfo.getPageNum();
+        this.pageNum = pageInfo.getPageNum();
         this.pageSize = pageInfo.getPageSize();
         this.pageTotal = pageInfo.getPages();
         this.totalNum = pageInfo.getTotal();

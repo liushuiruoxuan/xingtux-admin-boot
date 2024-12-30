@@ -69,10 +69,7 @@ public class ${table.serviceImplName} implements ${table.serviceName}{
       return ${table.mapperName?uncap_first}.update${entity}(BeanUtil.copyProperties(request, ${entity}.class));
     }
 
-    @Override
-    public int updateBatch${entity}Ids(${entity}Request request) {
-      return ${table.mapperName?uncap_first}.updateBatch${entity}Ids(BeanUtil.copyProperties(request, ${entity}.class));
-    }
+
 
     @Override
     public int updateBatch${entity}(List<${entity}Request> request) {

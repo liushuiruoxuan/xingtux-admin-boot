@@ -52,12 +52,6 @@ public interface ${table.serviceName}  {
     */
     int update${entity}(${entity}Request request);
     /**
-    * 通过Ids批量修改
-    * @param request
-    * @return
-    */
-    int updateBatch${entity}Ids(${entity}Request request);
-    /**
     * 批量修改
     * @param request
     * @return

@@ -35,7 +35,8 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
-            <version>${knife4j.version}</version>
+<!--            <version>${knife4j.version}</version>-->
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
