@@ -1,6 +1,7 @@
 package ${package.Controller}.request;
 
 
+import ${commonPackagePath}.common.PageRequest;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -25,7 +26,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(value = "${entity}Request对象", description = "${table.comment!}")
-public class ${entity}Request implements Serializable {
+public class ${entity}Request extends PageRequest implements Serializable {
 
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list table.fields as field>

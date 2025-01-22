@@ -33,6 +33,8 @@
             <#list table.fields as field>
                 <#if field.propertyName =="deleted">
                     and deleted = 0
+                <#elseif field.propertyName == "del_flag">
+                    and del_flag = 0
                 <#elseif field.propertyType == "String">
                     <if test="${field.propertyName} != null and ${field.propertyName} !=''">
                         and ${field.name} = ${r"#{"}${field.propertyName}${r"}"}

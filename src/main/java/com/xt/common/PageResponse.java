@@ -1,6 +1,7 @@
 package com.xt.common;
 
 import com.github.pagehelper.PageInfo;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -44,4 +45,6 @@ public class PageResponse<T extends Serializable> implements Serializable {
         this.totalNum = pageInfo.getTotal();
         this.records = pageInfo.getList();
     }
+
+
 }

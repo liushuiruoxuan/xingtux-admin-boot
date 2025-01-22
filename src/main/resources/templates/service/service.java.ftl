@@ -26,7 +26,7 @@ public interface ${table.serviceName}  {
     * @param request
     * @return
     */
-    PageResponse<${entity}Response> get${entity}Page(PageRequest<${entity}Request> request);
+    PageResponse<${entity}Response> get${entity}Page(${entity}Request request);
     /**
     * 查询一条数据（查详情）
     * @param request

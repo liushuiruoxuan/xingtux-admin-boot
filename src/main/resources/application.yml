@@ -6,10 +6,13 @@ spring:
 #mybatis 分页插件
 pagehelper:
   helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
 
 
 server:
-  port: 8081
+  port: 9092
   servlet:
     context-path: /
   tomcat:

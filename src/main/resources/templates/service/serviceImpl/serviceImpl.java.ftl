@@ -36,13 +36,20 @@ public class ${table.serviceImplName} implements ${table.serviceName}{
       return BeanUtil.copyToList(${entity?uncap_first}List, ${entity}Response.class);
     }
     @Override
-    public PageResponse<${entity}Response> get${entity}Page(PageRequest<${entity}Request> request) {
+    public PageResponse<${entity}Response> get${entity}Page(${entity}Request request) {
       PageHelper.startPage(request.getPageNum(), request.getPageSize());
-      List<${entity}> ${entity?uncap_first}List = ${table.mapperName?uncap_first}.get${entity}List(BeanUtil.copyProperties(request.getParamData(), ${entity}.class));
+      List<${entity}> ${entity?uncap_first}List = ${table.mapperName?uncap_first}.get${entity}List(BeanUtil.copyProperties(request, ${entity}.class));
       if (CollectionUtils.isEmpty(${entity?uncap_first}List)) {
          return new PageResponse<>(new PageInfo<>(Lists.newArrayList()));
       }
-      return new PageResponse<>(BeanUtil.copyProperties(new PageInfo<>(${entity?uncap_first}List),PageInfo.class));
+      PageInfo<${entity}> ${entity?uncap_first}PageInfo = new PageInfo<>(${entity?uncap_first}List);
+      PageResponse<${entity}Response> ${entity?uncap_first}Response = new PageResponse<>();
+      ${entity?uncap_first}Response.setPageNum(${entity?uncap_first}PageInfo.getPageNum());
+      ${entity?uncap_first}Response.setPageSize(${entity?uncap_first}PageInfo.getPageSize());
+      ${entity?uncap_first}Response.setPageTotal(${entity?uncap_first}PageInfo.getPages());
+      ${entity?uncap_first}Response.setTotalNum(${entity?uncap_first}PageInfo.getTotal());
+      ${entity?uncap_first}Response.setRecords(BeanUtil.copyToList(${entity?uncap_first}PageInfo.getList(), ${entity}Response.class));
+      return ${entity?uncap_first}Response;
     }
     @Override
     public ${entity}Response get${entity}One(${entity}Request request) {

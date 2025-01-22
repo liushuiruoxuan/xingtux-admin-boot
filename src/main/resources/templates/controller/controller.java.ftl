@@ -26,20 +26,20 @@ public class ${table.controllerName} {
     private ${table.serviceName} ${entity?uncap_first}Service ;
 
     @ApiOperation(value = "查询列表")
-    @PostMapping("/get${entity}List")
-    public ResponseResult<List<${entity}Response>> get${entity}List(@RequestBody ${entity}Request request) {
+    @GetMapping("/get${entity}List")
+    public ResponseResult<List<${entity}Response>> get${entity}List(${entity}Request request) {
         return ResponseResult.success(${entity?uncap_first}Service.get${entity}List(request));
     }
 
     @ApiOperation(value = "分页查询列表")
-    @PostMapping("/get${entity}Page")
-    public ResponseResult<PageResponse<${entity}Response>> get${entity}Page(@RequestBody PageRequest<${entity}Request> request) {
+    @GetMapping("/get${entity}Page")
+    public ResponseResult<PageResponse<${entity}Response>> get${entity}Page(${entity}Request request) {
         return ResponseResult.success(${entity?uncap_first}Service.get${entity}Page(request));
     }
 
     @ApiOperation(value = "查询详情")
-    @PostMapping("/get${entity}One")
-    public ResponseResult<${entity}Response> get${entity}One(@RequestBody ${entity}Request request) {
+    @GetMapping("/get${entity}One")
+    public ResponseResult<${entity}Response> get${entity}One(${entity}Request request) {
         return ResponseResult.success(${entity?uncap_first}Service.get${entity}One(request));
     }
 
